@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('content')
     <div tabindex="-1" class="modal pmd-modal fade" id="form-dialog" style="display: none;" aria-hidden="true">
         <div class="modal-dialog">
@@ -8,6 +9,11 @@
                     <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
                 </div>
                 <div class="modal-body bg-light">
+                    <div class="alert alert-danger print-error-msg" style="display:none">
+
+                        <ul></ul>
+                
+                    </div>
                     <form id="add_company" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
@@ -16,12 +22,12 @@
                                 placeholder="Enter the name" require>
                             <p id="name_error"></p>
                             @if ($errors->has('name'))
-                                <div class="text-danger">{{ $errors->first('name') }}</div>
+                                <div class="text-danger" id="">{{ $errors->first('name') }}</div>
                             @endif
                         </div>
                         <div class="mb-3">
                             <label for="" class="form-label">company id : </label>
-                            <input type="email" class="form-control  rounded-3  email" name="email" id="email" require>
+                            <input type="email" class="form-control  rounded-3  email" name="email" id="email" >
                             <p id="email_error"></p>
                             @if ($errors->has('email'))
                                 <div class="text-danger">{{ $errors->first('email') }}</div>
@@ -29,7 +35,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="formFile" class="form-label">Select company logo : </label>
-                            <input class="form-control icon" name="icon" id="icon" type="file" require>
+                            <input class="form-control icon" name="icon" id="icon" type="file" >
                             <p id="icon_error"></p>
                             @if ($errors->has('logo'))
                                 <div class="text-danger">{{ $errors->first('logo') }}</div>
@@ -46,8 +52,7 @@
                         </div>
                         <div class="modal-footer">
 
-                            <button data-dismiss="modal" class="btn pmd-ripple-effect btn-dark pmd-btn-flat submit"
-                                type="submit">ADD</button>
+                            <button class="btn pmd-ripple-effect btn-dark pmd-btn-flat submit" type="submit">ADD</button>
                         </div>
                     </form>
                 </div>
@@ -140,7 +145,7 @@
                     ]
                 });
 
-           
+
 
                 //insert data into database 
                 $(document).on('click', '.submit', (function(e) {
@@ -152,7 +157,7 @@
                     var icon = $('#icon').val();
                     var website = $('#website').val();
                     console.log(name, email, icon, website);
-                    var formData = new FormData(document.querySelector("#add_product"));
+                    var formData = new FormData(document.querySelector("#add_company"));
                     $.ajax({
                         url: "{{ route('company.store') }}",
                         data: formData,
@@ -162,12 +167,34 @@
                         contentType: false,
                         processData: false,
                         success: function(data) {
-                            $('#add_product').trigger('reset');
-                            $(".data-table").DataTable().ajax.reload();
+                            //console.log(data);
+                            if ($.isEmptyObject(data.error)) {
+                              
+                            
+                               $("#form-dialog").modal("hide"); 
+                               $(".data-table").DataTable().ajax.reload();
+                               $('#name').val("");
+                        $('#email').val("");
+                        $('#website').val("");
+                        $('#icon').val(""); 
+                            } else {
+                                printErrorMsg(data.error);
+                            }
+                 
                         }
-
                     });
                 }));
+            
+            
+                function printErrorMsg(msg) {
+
+                    $(".print-error-msg").find("ul").html('');
+                    $(".print-error-msg").css('display', 'block');
+                    $.each(msg, function(key, value) {
+                        $(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+                    });
+
+                }
                 //delete data from database
                 $(document).on('click', '.product_delete', function(e) {
                     var id = $(this).data('id');

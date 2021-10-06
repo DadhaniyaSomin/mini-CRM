@@ -1,57 +1,63 @@
 @extends('layouts.app')
 @section('content')
-<div tabindex="-1" class="modal pmd-modal fade" id="form-dialog" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header pmd-modal-border text-white bg-dark ">
-                <h2 class="modal-title">ADD SOMETHING AMAZING</h2>
-                <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
-            </div>
-            <div class="modal-body bg-light">
-                <form id="add_product" enctype="multipart/form-data">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="Product name" class="form-label">first name : </label>
-                        <input type="text" class="form-control rounded-3 n" name="first_name" id="first_name" autocomplete="off"
-                            placeholder="Enter the name">
-                        <p id="fname_error"></p>
-                       
-                    </div>
-                    <div class="mb-3">
-                        <label for="Product name" class="form-label">last name : </label>
-                        <input type="text" class="form-control rounded-3 " name="last_name" id="last_name" autocomplete="off"
-                            placeholder="Enter the name">
-                        <p id="lname_error"></p>
-                       
-                    </div>
-                    <div class="mb-3">
-                        
-                        <input type="text" class="form-control  rounded-3  cid" name="cid" id="cid" value="{{$company->id}}" hidden >
-                        <p id="cid_error"></p>
-                     
-                    </div>
-                    <div class="mb-3">
-                        <label for="" class="form-label">Email : </label>
-                        <input type="email" class="form-control  rounded-3  email" name="email" id="email">
-                        <p id="email_error"></p>
-                     
-                    </div>
-                    <div class="mb-3">
-                        <label for="" class="form-label">phone : </label>
-                        <input type="text" class="form-control  rounded-3  phone" name="phone" id="phone">
-                        <p id="phone_error"></p>
-                    </div>
-                    
-                    <div class="modal-footer">
+    <div tabindex="-1" class="modal pmd-modal fade" id="form-dialog" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header pmd-modal-border text-white bg-dark ">
+                    <h2 class="modal-title">ADD SOMETHING AMAZING</h2>
+                    <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                </div>
+                <div class="modal-body bg-light">
+                    <div class="alert alert-danger print-error-msg" style="display:none">
 
-                        <button data-dismiss="modal" class="btn pmd-ripple-effect btn-dark pmd-btn-flat submit"
-                            type="submit">ADD</button>
+                        <ul></ul>
+                
                     </div>
-                </form>
+                    <form id="add_product" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="Product name" class="form-label">first name : </label>
+                            <input type="text" class="form-control rounded-3 n" name="first_name" id="first_name"
+                                autocomplete="off" placeholder="Enter the name">
+                            <p id="fname_error"></p>
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="Product name" class="form-label">last name : </label>
+                            <input type="text" class="form-control rounded-3 " name="last_name" id="last_name"
+                                autocomplete="off" placeholder="Enter the name">
+                            <p id="lname_error"></p>
+
+                        </div>
+                        <div class="mb-3">
+
+                            <input type="text" class="form-control  rounded-3  cid" name="cid" id="cid"
+                                value="{{ $company->id }}" hidden>
+                            <p id="cid_error"></p>
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="" class="form-label">Email : </label>
+                            <input type="email" class="form-control  rounded-3  email" name="email" id="email">
+                            <p id="email_error"></p>
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="" class="form-label">phone : </label>
+                            <input type="text" class="form-control  rounded-3  phone" name="phone" id="phone">
+                            <p id="phone_error"></p>
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button data-dismiss="modal" class="btn pmd-ripple-effect btn-dark pmd-btn-flat submit"
+                                type="submit">ADD</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
     <div class="container-fluid ">
         <div class=" p-3 bg-dark text-white rounded-pill text-uppercase text-center">
             <p class="display-4 pl-4">{{ $company->name }}</p>
@@ -67,7 +73,7 @@
                 <div class="p-4">
                     <p class="fs-4"> Email : {{ $company->email }} </p>
                     <p class="fs-4"> website : {{ $company->website }} </p>
-                </div>   
+                </div>
             </div>
         </div>
         <div class="col-5 mb-3 ">
@@ -134,36 +140,57 @@
                 });
 
                 $(document).on('click', '.submit', (function(e) {
-                  
-                  e.preventDefault();
-                  //var id = $('#id').val();
-                  var first_name = $('#first_name').val();
-                  var last_name = $('#last_name').val();
-                  var email = $('#email').val();
-                  var phone = $('#phone').val();
-                  var company_id = $('#cid').val();
-                  console.log(email, phone, company_id);
-                  var formData = new FormData(document.querySelector("#add_product"));
-                  $.ajax({
-                      url: "{{ route('employee.store') }}",
-                      data: formData,
-                      type: 'POST',
-                      datatype: 'json',
-                      cache: false,
-                      contentType: false,
-                      processData: false,
-                      success: function(data) {
-                          
-                              $('#add_product').trigger('reset');
-                              $(".data-table").DataTable().ajax.reload();
-                          
-                      },
-                  });
-              }));
 
-              $('#fname_error #lname_error #phone_error #email_error ').hide();
-                $('alert alert-danger').reomove 
-                var fname_error, email_error, lname_error, phone_error= true;
+                    e.preventDefault();
+                    //var id = $('#id').val();
+                    var first_name = $('#first_name').val();
+                    var last_name = $('#last_name').val();
+                    var email = $('#email').val();
+                    var phone = $('#phone').val();
+                    var company_id = $('#cid').val();
+                    console.log(email, phone, company_id);
+                    var formData = new FormData(document.querySelector("#add_product"));
+                    $.ajax({
+                        url: "{{ route('employee.store') }}",
+                        data: formData,
+                        type: 'POST',
+                        datatype: 'json',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        success: function(data) {
+                            if ($.isEmptyObject(data.error)) {
+
+                                $('#add_product').trigger('reset');
+                                $(".data-table").DataTable().ajax.reload();
+
+                            } else {
+
+                                printErrorMsg(data.error);
+
+                            }
+
+                        },
+                    });
+                }));
+
+                function printErrorMsg(msg) {
+
+                    $(".print-error-msg").find("ul").html('');
+
+                    $(".print-error-msg").css('display', 'block');
+
+                    $.each(msg, function(key, value) {
+
+                        $(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+
+                    });
+
+                }
+
+                $('#fname_error #lname_error #phone_error #email_error ').hide();
+                $('alert alert-danger').reomove
+                var fname_error, email_error, lname_error, phone_error = true;
                 $('#first_name').keyup(function() {
                     fnameCheck();
                 });
@@ -176,8 +203,8 @@
                 $('#phone').keyup(function() {
                     phoneCheck();
                 });
-                
-                
+
+
                 function fnameCheck() {
                     var name_val = $('#first_name').val();
                     if (name_val.length == 0) {
@@ -189,7 +216,7 @@
                         return false;
                     } else {
                         $('#fname_error').hide();
-                        
+
                     }
                     if (name_val.length < 3 || name_val.length > 10) {
                         $('#fname_error').show();
@@ -214,7 +241,7 @@
                         return false;
                     } else {
                         $('#lname_error').hide();
-                        
+
                     }
                     if (name_val.length < 3 || name_val.length > 10) {
                         $('#lname_error').show();
@@ -253,9 +280,10 @@
                         return false;
                     } else {
                         $('#email_error').hide();
-                        
+
                     }
-                    const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+                    const re =
+                        /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
                     if (!re.test(email_val)) {
                         $('#email_error').show();
                         $('#email_error').html('Please enter the valid email');
@@ -278,12 +306,12 @@
                         phone_error = false;
                         return false;
                     } else {
-                        $('#phone_error').hide();    
+                        $('#phone_error').hide();
                     }
 
-                   const re = /^(?:(?:\+|0{0,2})91(\s*[\ -]\s*)?|[0]?)?[789]\d{9}|(\d[ -]?){10}\d$/;
+                    const re = /^(?:(?:\+|0{0,2})91(\s*[\ -]\s*)?|[0]?)?[789]\d{9}|(\d[ -]?){10}\d$/;
 
-                   if (!re.test(phone_val)) {
+                    if (!re.test(phone_val)) {
                         $('#phone_error').show();
                         $('#phone_error').html('Please enter the phone no');
                         $('#phone_error').focus();

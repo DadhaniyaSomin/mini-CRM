@@ -6,6 +6,7 @@ use App\Models\company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class companyController extends Controller
 {
@@ -55,31 +56,35 @@ class companyController extends Controller
      */
     public function store(Request $request)
     {
-
-        $request->validate([
+        
+        $validator = Validator::make($request->all(), [
             'name' => 'required|max:20',
             'email' => 'required',
             'website' => 'required|url ',
             'icon' => 'required| mimes:jpeg,bmp,png',
         ]);
+        if (!$validator->passes()) {
+            return response()->json(['error'=>$validator->errors()->all()]);
+        } else {
+            if ($request->has('icon')) {
+                // dd($request->has('image'));
+                $file = $request->file('icon');
+                $filename = time() . '.' . $file->getClientOriginalExtension();
+                $path = "/icon";
+                $dd = $file->move(public_path($path), $filename);
+            }
+            $company = new company();
+            $company->name = $request->name;
+            $company->email = $request->email;
+            $company->website = $request->website;
+            $company->logo = isset($filename) ? $filename : "";
+            // dd($products);
 
-        if ($request->has('icon')) {
-            // dd($request->has('image'));
-            $file = $request->file('icon');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $path = "/icon";
-            $dd = $file->move(public_path($path), $filename);
-        }
-        $company = new company();
-        $company->name = $request->name;
-        $company->email = $request->email;
-        $company->website = $request->website;
-        $company->logo = isset($filename) ? $filename : "";
-        // dd($products);
-
-        $save = $company->save();
-        if ($save) {
-            return redirect()->route('company.index');
+            $save = $company->save();
+            if ($save) {
+                
+                return redirect()->route('company.index');
+            }
         }
     }
 
