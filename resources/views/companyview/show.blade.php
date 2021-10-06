@@ -9,9 +9,7 @@
                 </div>
                 <div class="modal-body bg-light">
                     <div class="alert alert-danger print-error-msg" style="display:none">
-
                         <ul></ul>
-                
                     </div>
                     <form id="add_product" enctype="multipart/form-data">
                         @csrf
@@ -58,6 +56,31 @@
             </div>
         </div>
     </div>
+      <!--Modal: modalConfirmDelete-->
+      <div class="modal fade" id="modalConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
+          <!--Content-->
+          <div class="modal-content text-center">
+              <!--Header-->
+              <div class="modal-header d-flex justify-content-center">
+                  <p class="heading">Are you sure?</p>
+              </div>
+              <!--Body-->
+              <div class="modal-body">
+                  <i class="fa fa-times fa-4x animated rotateIn"></i>
+                  <p>Are you sure you want to delte this Product .This can not be undone</p>
+              </div>
+              <!--Footer-->
+              <div class="modal-footer flex-center">
+                  <button data-dismiss="modal" class="btn pmd-ripple-effect btn-danger pmd-btn-flat" id="delete"
+                      type="button">yes</button>
+                  <a type="button" class="btn  btn-danger waves-effect" data-dismiss="modal">No</a>
+              </div>
+          </div>
+          <!--/.Content-->
+      </div>
+  </div>
     <div class="container-fluid ">
         <div class=" p-3 bg-dark text-white rounded-pill text-uppercase text-center">
             <p class="display-4 pl-4">{{ $company->name }}</p>
@@ -160,9 +183,13 @@
                         processData: false,
                         success: function(data) {
                             if ($.isEmptyObject(data.error)) {
-
-                                $('#add_product').trigger('reset');
+                                $("#form-dialog").modal("hide");
                                 $(".data-table").DataTable().ajax.reload();
+                                $('#first_name').val("");
+                                $('#last_name').val("");
+                                $('#phone').val("");
+                                $('#email').val("");
+                                
 
                             } else {
 
@@ -174,6 +201,27 @@
                     });
                 }));
 
+                   //delete data from database
+                   $(document).on('click', '.product_delete', function(e) {
+                    var id = $(this).data('id');
+                    console.log(id);
+                    $('#delete').click(function(e) {
+                        e.preventDefault();
+                        $.ajax({
+                            url: "{{ url('employee') }}" + '/' + id,
+                            type: 'POST',
+                            dataType: 'JSON',
+                            data: {
+                                'id': id,
+                                _token: "{{ csrf_token() }}",
+                                _method: "DELETE"
+                            },
+                            success: function(data) {
+                                $(".data-table").DataTable().ajax.reload();
+                            },
+                        });
+                    });
+                });
                 function printErrorMsg(msg) {
 
                     $(".print-error-msg").find("ul").html('');

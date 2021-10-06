@@ -41,9 +41,9 @@ class EmployeeController extends Controller
             'first_name' => 'required|max:20',
             'last_name' => 'required|max:20',
             'email' => 'required',
-            'phone' => 'required|',
+            'phone' => 'required|'
             // 'icon' => 'required| mimes:jpeg,bmp,png',
-        ]);
+        ])->validate();
         if (!$validator->passes()) {
             return response()->json(['error'=>$validator->errors()->all()]);
         } else {
@@ -124,8 +124,12 @@ class EmployeeController extends Controller
      * @param  \App\Models\employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function destroy(employee $employee)
+    public function destroy($id)
     {
         //
+       $c =  employee::find($id);
+            employee::find($id)->delete();
+             
+         return redirect()->route('companyview.show', $c->company_id);
     }
 }
